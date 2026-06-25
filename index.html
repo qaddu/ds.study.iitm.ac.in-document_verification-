@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IIT Madras - Student Document Verification</title>
+    
+    <link rel="icon" type="image/png" href="1000405086.png">
+
+    <style>
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #ffffff;
+            color: #333333;
+        }
+
+        /* Navbar Styles */
+        header {
+            width: 100%;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            background-color: #ffffff;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+        }
+
+        .brand h1 {
+            font-size: 1.25rem;
+            color: #2c3e50;
+            font-weight: 700;
+        }
+
+        /* Hamburger Menu Icon */
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 24px;
+            height: 18px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .hamburger span {
+            width: 100%;
+            height: 2px;
+            background-color: #5f6368;
+        }
+
+        /* Mobile Dropdown Menu */
+        .dropdown-menu {
+            display: none;
+            width: 100%;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 15px 20px;
+        }
+
+        .dropdown-menu.active {
+            display: block;
+        }
+
+        .login-btn {
+            display: inline-block;
+            color: #8b2323;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 8px 0;
+        }
+
+        /* Main Content Area */
+        main {
+            flex: 1;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .content-title {
+            font-size: 1.75rem;
+            color: #111111;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        /* State Sections Control */
+        .state-section {
+            display: none; /* Hidden by default */
+        }
+
+        .state-section.active {
+            display: block; /* Visible when state class active added */
+        }
+
+        /* --- STYLING: STATE 1 (Verification View) --- */
+        .captcha-container {
+            width: 300px;
+            height: 76px;
+            background-color: #f9f9f9;
+            border: 1px solid #d3d3d3;
+            border-radius: 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 0 4px rgba(0,0,0,0.05);
+        }
+
+        .captcha-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .captcha-checkbox {
+            width: 28px;
+            height: 28px;
+            border: 2px solid #c1c1c1;
+            border-radius: 2px;
+            background-color: #fff;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .captcha-checkbox.checked::after {
+            content: "";
+            width: 6px;
+            height: 12px;
+            border: solid #00aa4f;
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+            margin-bottom: 4px;
+        }
+
+        .captcha-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #4d90fe;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .captcha-text {
+            font-size: 14px;
+            color: #2b2b2b;
+            user-select: none;
+        }
+
+        .captcha-right {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .captcha-logo {
+            width: 24px;
+            height: 24px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%234A90E2"><path d="M12 2A10 10 0 0 0 2 12A10 10 0 0 0 12 22A10 10 0 0 0 22 12A10 10 0 0 0 12 2M12 4A8 8 0 0 1 20 12A8 8 0 0 1 12 20A8 8 0 0 1 4 12A8 8 0 0 1 12 4M12 6V11H7V13H12V18L17 12L12 6Z"/></svg>') no-repeat center;
+            background-size: contain;
+        }
+
+        .captcha-brand-text {
+            font-size: 8px;
+            color: #555555;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .verify-btn {
+            background-color: #fcf8e3;
+            color: #a83232;
+            border: 1px solid #a83232;
+            padding: 10px 16px;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 4px;
+            cursor: not-allowed;
+            opacity: 0.6;
+            transition: all 0.2s ease;
+        }
+
+        .verify-btn.active {
+            opacity: 1;
+            cursor: pointer;
+            background-color: #a83232;
+            color: #ffffff;
+        }
+
+        /* --- STYLING: STATE 2 (Document Download View) --- */
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .doc-link {
+            color: #a83232;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .website-link {
+            color: #daa520;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .doc-link:hover, .website-link:hover, .login-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer Exact Styling Match */
+        footer {
+            width: 100%;
+            background-color: #f5f5f5;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .footer-top {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 20px;
+            font-size: 0.95rem;
+            color: #333333;
+        }
+
+        .footer-title {
+            font-weight: 400;
+            color: #333333;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-top p {
+            font-size: 0.9rem;
+            color: #444444;
+        }
+
+        /* Dark Maroon copyright banner */
+        .footer-bottom {
+            background-color: #8b2323;
+            color: #ffffff;
+            padding: 18px 20px;
+            font-size: 0.9rem;
+        }
+
+        .footer-bottom-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .brand h1 { font-size: 1.5rem; }
+            .content-title { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="brand">
+                <img src="1000405086.png" alt="IIT Madras Logo" class="logo-img" onerror="this.style.display='none';">
+                <h1>IIT Madras</h1>
+            </div>
+            <button class="hamburger" id="menuToggle" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+        <div class="dropdown-menu" id="dropdownMenu">
+            <a href="https://ds.study.iitm.ac.in/auth/login?next=https://ds.study.iitm.ac.in/document_verification/ad96c5456f440be611638c8cdbb29443e780ae6ca4acadd23d2d096bac320bd0" class="login-btn">Login</a>
+        </div>
+    </header>
+
+    <main>
+        <h2 class="content-title" id="pageTitle">Student Document Verification</h2>
+        
+        <div id="verificationSection" class="state-section active">
+            <div class="captcha-container">
+                <div class="captcha-left">
+                    <div class="captcha-checkbox" id="captchaBox">
+                        <div class="captcha-spinner" id="captchaSpinner"></div>
+                    </div>
+                    <span class="captcha-text">I'm not a robot</span>
+                </div>
+                <div class="captcha-right">
+                    <div class="captcha-logo"></div>
+                    <span class="captcha-brand-text">reCAPTCHA</span>
+                </div>
+            </div>
+            <button type="button" class="verify-btn" id="verifyBtn" disabled>Verify and Download</button>
+        </div>
+
+        <div id="documentSection" class="state-section">
+            <div class="links-container">
+                <a href="#download" class="doc-link">Download Document</a>
+                <a href="https://study.iitm.ac.in/" class="website-link">
+                    Go to IIT Madras BS Degree in Data Science and Applications Website
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-top">
+            <div class="footer-title">TERMS OF USE:</div>
+            <p>Falsifying information may subject the student to disciplinary action.</p>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-bottom-container">
+                © IIT Madras. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Menu Toggle Handling
+        const menuToggle = document.getElementById('menuToggle');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        menuToggle.addEventListener('click', () => dropdownMenu.classList.toggle('active'));
+
+        // Captcha Box Validation Mechanics
+        const captchaBox = document.getElementById('captchaBox');
+        const captchaSpinner = document.getElementById('captchaSpinner');
+        const verifyBtn = document.getElementById('verifyBtn');
+        
+        // Single-Page Elements References
+        const pageTitle = document.getElementById('pageTitle');
+        const verificationSection = document.getElementById('verificationSection');
+        const documentSection = document.getElementById('documentSection');
+        
+        let isVerified = false;
+
+        captchaBox.addEventListener('click', () => {
+            if (isVerified) return;
+            captchaSpinner.style.display = 'block';
+            
+            setTimeout(() => {
+                captchaSpinner.style.display = 'none';
+                captchaBox.classList.add('checked');
+                isVerified = true;
+                
+                // Active Button styling 
+                verifyBtn.classList.add('active');
+                verifyBtn.removeAttribute('disabled');
+            }, 1000); 
+        });
+
+        // SINGLE-PAGE ROUTING
+        verifyBtn.addEventListener('click', () => {
+            if (isVerified) {
+                pageTitle.textContent = "Student Document";
+                verificationSection.classList.remove('active');
+                documentSection.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
